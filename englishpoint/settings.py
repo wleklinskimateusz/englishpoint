@@ -31,13 +31,15 @@ ALLOWED_HOSTS = ['englishpoint.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'handler.apps.HandlerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms'
+    'crispy_forms',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +119,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+
+PHONENUMBER_DEFAULT_REGION = 'PL'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
