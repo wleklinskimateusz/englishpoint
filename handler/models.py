@@ -16,7 +16,7 @@ class StudentGroup(models.Model):
     name = models.CharField(max_length=20)
     lesson_time = models.DurationField()
     amount_lessons = models.IntegerField()
-    #lesson1 = weekday_field.fields.Weekday_field()
+    #lesson1 = weekday_field.Weekday_field()
 
 
 class Student(models.Model):
