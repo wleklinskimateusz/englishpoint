@@ -1,8 +1,32 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from .models import *
 # Create your views here.
 
 
 def home(request):
-    template_name = 'panel.html'
-    return render(request, template_name)
+    return redirect(reverse_lazy('handler:clients'))
+
+
+def clients(request):
+    template_name = 'clients.html'
+    context = {
+        'clients': Parent.objects.all(),
+    }
+    return render(request, template_name, context)
+
+
+def students(request):
+    template_name = 'students.html'
+    context = {
+        'students': Student.objects.all(),
+    }
+    return render(request, template_name, context)
+
+
+def payments(request):
+    template_name = 'payments.html'
+    context = {
+        'payments': Payment.objects.all(),
+    }
+    return render(request, template_name, context)

@@ -22,19 +22,16 @@ body {font-size:16px;}
     <h1 class="w3-padding-64"><b style="font-family: 'Leckerli One',cursive">EnglishPoint</b></h1>
   </div>
   <div class="w3-bar-block">
-    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a>
-    <a href="#showcase" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Showcase</a>
-    <a href="#services" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Services</a>
-    <a href="#designers" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Designers</a>
-    <a href="#packages" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Packages</a>
-    <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contact</a>
+    <a href="{% url "handler:clients" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Clients Data</a>
+    <a href="{% url "handler:students" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Students Data</a>
+    <a href="{% url "handler:payments" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Payments</a>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
   <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
-  <span>Company Name</span>
+  <span>English Point</span>
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
