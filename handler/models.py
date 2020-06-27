@@ -10,10 +10,10 @@ class Parent(models.Model):
     first_name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
     email = models.CharField(max_length=30, null=True)
-    phone_number = PhoneNumberField()
+    phone_number = PhoneNumberField(null=True, blank=True)
 
     def __str__(self):
-        return self.surname
+        return f"{self.first_name} {self.surname}"
 
 
 class StudentGroup(models.Model):
@@ -21,10 +21,14 @@ class StudentGroup(models.Model):
     lesson_duration = models.DurationField()
     amount_lessons = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Student(models.Model):
     first_name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
+    group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, null=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     birthday = models.DateField(null=True, blank=True)
 
@@ -33,9 +37,9 @@ class Student(models.Model):
 
 
 class Payment(models.Model):
-    Client = models.ForeignKey(Parent, on_delete=models.CASCADE)
-    Value = models.FloatField()
-    Date = models.DateField(default=now().day)
+    client = models.ForeignKey(Parent, on_delete=models.CASCADE)
+    value = models.FloatField()
+    date = models.DateField(default=now().date())
     comment = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -43,6 +47,6 @@ class Payment(models.Model):
             com = self.comment
         else:
             com = ""
-        return f"{self.Client} payed {self.Date}, {com}"
+        return f"{self.client} payed {self.date}, {com}"
 
 

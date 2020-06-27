@@ -3,3 +3,5 @@ from .models import *
 # Register your models here.
 admin.site.register(Parent)
 admin.site.register(Student)
+admin.site.register(StudentGroup)
+admin.site.register(Payment)

@@ -20,7 +20,7 @@
       <ul class="w3-ul w3-light-grey w3-center">
         <li class="w3-dark-grey w3-xlarge w3-padding-32">Students:</li>
         {% for student in students %}
-        <li class="w3-padding-16">{{ student }}</li>
+            <a href="{% url 'handler:student' student.id %}"><li class="w3-padding-16">{{ student }}</li></a>
         {% endfor %}
         <!--<li class="w3-padding-16">
           <h2>$ 199</h2>
