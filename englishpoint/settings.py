@@ -129,8 +129,9 @@ PHONENUMBER_DEFAULT_REGION = 'PL'
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = ( os.path.join('handler/static'), )
+STATICFILES_DIRS = (os.path.join('handler/static'), )
 
-
+LOGIN_REDIRECT_URL = "handler:home"
+LOGOUT_REDIRECT_URL = "handler:home"

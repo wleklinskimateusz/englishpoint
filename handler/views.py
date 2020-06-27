@@ -5,12 +5,18 @@ from .models import *
 
 
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     return redirect(reverse_lazy('handler:clients'))
 
 ###CLIENTS###
 
 
 def clients(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     template_name = 'clients.html'
     context = {
         'clients': Parent.objects.all(),
@@ -19,6 +25,9 @@ def clients(request):
 
 
 def client(request, client_id):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     my_client = get_object_or_404(Parent, pk=client_id)
     template_name = 'client.html'
     kids = Student.objects.filter(parent=my_client)
@@ -33,6 +42,9 @@ def client(request, client_id):
 
 
 def students(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     template_name = 'students.html'
     context = {
         'students': Student.objects.all(),
@@ -41,6 +53,9 @@ def students(request):
 
 
 def student(request, student_id):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     my_student = get_object_or_404(Student, pk=student_id)
     template_name = 'student.html'
     context = {
@@ -53,6 +68,9 @@ def student(request, student_id):
 
 
 def groups(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     template_name = 'groups.html'
     context = {
         'groups': StudentGroup.objects.all(),
@@ -61,6 +79,9 @@ def groups(request):
 
 
 def group(request, group_id):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     my_group = get_object_or_404(StudentGroup, pk=group_id)
     template_name = 'group.html'
     context = {
@@ -74,6 +95,9 @@ def group(request, group_id):
 
 
 def payments(request):
+    if not request.user.is_authenticated:
+        return redirect('accounts/login')
+
     template_name = 'payments.html'
     context = {
         'payments': Payment.objects.all(),
