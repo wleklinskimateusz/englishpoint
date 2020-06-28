@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.contrib import staticfiles
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -135,3 +137,5 @@ STATICFILES_DIRS = (os.path.join('handler/static'), )
 
 LOGIN_REDIRECT_URL = "handler:home"
 LOGOUT_REDIRECT_URL = "handler:home"
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
