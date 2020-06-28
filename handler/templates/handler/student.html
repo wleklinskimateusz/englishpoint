@@ -19,7 +19,7 @@
     <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
         <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ student }}</li>
-          <li class="w3-padding-16">{{ student.group }}</li>
+          <a href="{% url 'handler:group' student.group.id %}"><li class="w3-padding-16">{{ student.group }}</li></a>
           <a href="{% url 'handler:client' student.parent.id %}"><li class="w3-padding-16">{{ student.parent }}</li></a>
         {% if student.birthday %}
             <li class="w3-padding-16">{{ student.birthday }}</li>

@@ -2,4 +2,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    align-content: center;
+    text-align: center;
+    margin-top: 15%;
+}
+
+.btn-login {
+    margin-top: 10px;
 }
