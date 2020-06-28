@@ -1,16 +1,16 @@
 from django import forms
-from phonenumber_field.formfields import PhoneNumberField
-from .models import *
+from phonenumber_field.formfields import PhoneNumberField as Phone
+from .models import Parent, StudentGroup
 
 
 class ParentForm(forms.Form):
     first_name = forms.CharField(max_length=20)
     surname = forms.CharField(max_length=20)
     email = forms.CharField(max_length=30, required=False)
-    phone_number = PhoneNumberField(required=False)
+    phone_number = Phone(required=False)
 
 
-class StudentGroup(forms.Form):
+class StudentGroupForm(forms.Form):
     name = forms.CharField(max_length=20)
     lesson_duration = forms.DurationField()
     amount_lessons = forms.IntegerField()
