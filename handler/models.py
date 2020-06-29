@@ -55,6 +55,6 @@ class Payment(models.Model):
             com = self.comment
         else:
             com = ""
-        return f"{self.client} payed {self.date}, {com}"
+        return f"{self.client} zapłacił: {self.value}zł, {self.date}, {com}"
 
 

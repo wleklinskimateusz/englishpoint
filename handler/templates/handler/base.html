@@ -28,12 +28,20 @@ body {font-size:16px;}
   <div class="w3-container">
     <h1 class="w3-padding-64"><b style="font-family: 'Leckerli One',cursive">EnglishPoint</b></h1>
   </div>
-    {% if user.is_authenticated %}<p><b>Hello {{ user.first_name }}!</b></p><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>{% endif %}
+    {% if user.is_authenticated %}
+        <p>
+            <h2>Hello {{ user.first_name }}!</h2>
+        </p>
+        <p>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            <a href="/admin" class="btn btn-warning">Panel</a>
+        </p>
+    {% endif %}
   <div class="w3-bar-block">
-    <a href="{% url "handler:clients" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Clients Data</a>
-    <a href="{% url "handler:students" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Students Data</a>
-    <a href="{% url "handler:groups" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Groups Data</a>
-    <a href="{% url "handler:payments" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Payments</a>
+    <a href="{% url "handler:clients" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Rodzice</a>
+    <a href="{% url "handler:students" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Dzieci</a>
+    <a href="{% url "handler:groups" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Grupy</a>
+    <a href="{% url "handler:payments" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Płatności</a>
   </div>
 </nav>
 

@@ -13,14 +13,15 @@
 
   <!-- Clients -->
   <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>{{ group }} Data</b></h1>
+    <h1 class="w3-xxxlarge w3-text-red"><b>{{ group }}</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
       <div class="w3-row-padding">
     <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
         <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ group }}</li>
-          <li class="w3-padding-16">{{ group.lesson_duration }}</li>
-          <li class="w3-padding-16">{{ group.amount_lessons }}</li>
+          <li class="w3-padding-16">czas trwania lekcji: {{ group.lesson_duration }}</li>
+          <li class="w3-padding-16">ilość lekcji: {{ group.amount_lessons }}</li>
+          <li class="w3-dark-grey w3-padding-32">Dzieci:</li>
           {% for student in students %}
           <a href="{% url 'handler:student' student.id%}"><li class="w3-padding-16">{{ student }}</li></a>
           {% endfor %}

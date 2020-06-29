@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Students{% endblock %}
+{% block title %}Dzieci{% endblock %}
 {% block content %}
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
@@ -13,12 +13,12 @@
 
   <!-- Clients -->
   <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Students Data</b></h1>
+    <h1 class="w3-xxxlarge w3-text-red"><b>Dzieci</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
       <div class="w3-row-padding">
     <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">Students:</li>
+        <li class="w3-dark-grey w3-xlarge w3-padding-32">Dzieci:</li>
         {% for student in students %}
             <a href="{% url 'handler:student' student.id %}"><li class="w3-padding-16">{{ student }}</li></a>
         {% endfor %}
@@ -31,6 +31,8 @@
         </li>-->
       </ul>
     </div>
+
+      <a href="{% url 'handler:new_student' %}" class="btn btn-primary">Dodaj Dziecko</a>
 
 
   </div>

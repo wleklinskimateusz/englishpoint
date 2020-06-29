@@ -3,6 +3,10 @@ from phonenumber_field.formfields import PhoneNumberField as Phone
 from .models import Parent, StudentGroup
 
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class ParentForm(forms.Form):
     first_name = forms.CharField(max_length=20)
     surname = forms.CharField(max_length=20)
@@ -19,13 +23,13 @@ class StudentGroupForm(forms.Form):
 class StudentForm(forms.Form):
     first_name = forms.CharField(max_length=20)
     surname = forms.CharField(max_length=20)
-    group = forms.ModelChoiceField(StudentGroup)
-    parent = forms.ModelChoiceField(Parent)
-    birthday = forms.DateField(required=False)
+    group = forms.ModelChoiceField(StudentGroup.objects.all())
+    parent = forms.ModelChoiceField(Parent.objects.all())
+    birthday = forms.DateField(required=False, widget=DateInput)
 
 
 class PaymentForm(forms.Form):
-    client = forms.ModelChoiceField(Parent)
+    client = forms.ModelChoiceField(Parent.objects.all())
     value = forms.FloatField()
-    date = forms.DateField(required=False)
+    date = forms.DateField(required=False, widget=DateInput)
     comment = forms.CharField(max_length=50, required=False)
