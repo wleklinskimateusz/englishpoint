@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
+from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from .models import *
 from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm
@@ -64,6 +65,16 @@ def new_client(request):
 
     return render(request, template_name, context)
 
+
+class ClientDeleteView(DeleteView):
+    """
+    class for deleting GoGame Object
+    """
+    model = Parent
+    template_name = 'delete.html'
+    context_object_name = 'object'
+    success_url = reverse_lazy('handler:clients')
+
 ###STUDENTS###
 
 
@@ -115,6 +126,16 @@ def new_student(request):
     }
 
     return render(request, template_name, context)
+
+
+class StudentDeleteView(DeleteView):
+    """
+    class for deleting Student Object
+    """
+    model = Student
+    template_name = 'delete.html'
+    context_object_name = 'object'
+    success_url = reverse_lazy('handler:students')
 
 
 ###GROUPS###
@@ -169,6 +190,16 @@ def new_group(request):
     return render(request, template_name, context)
 
 
+class GroupDeleteView(DeleteView):
+    """
+    class for deleting Student Object
+    """
+    model = StudentGroup
+    template_name = 'delete.html'
+    context_object_name = 'object'
+    success_url = reverse_lazy('handler:groups')
+
+
 ###PAYMENTS###
 
 
@@ -207,3 +238,13 @@ def new_payment(request):
     }
 
     return render(request, template_name, context)
+
+
+class PaymentDeleteView(DeleteView):
+    """
+    class for deleting Student Object
+    """
+    model = Payment
+    template_name = 'delete.html'
+    context_object_name = 'object'
+    success_url = reverse_lazy('handler:payments')

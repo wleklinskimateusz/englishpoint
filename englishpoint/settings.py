@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['englishpoint.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'handler.apps.HandlerConfig',
+    'website.apps.WebsiteConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
