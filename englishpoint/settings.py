@@ -133,8 +133,7 @@ PHONENUMBER_DEFAULT_REGION = 'PL'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = (os.path.join('handler/static'),
-                    os.path.join(BASE_DIR, 'staticfiles'))
+STATICFILES_DIRS = (os.path.join('handler/static'),)
 
 LOGIN_REDIRECT_URL = "handler:home"
 LOGOUT_REDIRECT_URL = "handler:home"
