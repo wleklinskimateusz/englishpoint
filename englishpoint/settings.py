@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '3(^%-d2m$6!3&_or2m*(@@nejgayj6nwicrqkcs$*=!-&+pg2e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['englishpoint.herokuapp.com', '127.0.0.1']
 
@@ -130,10 +130,10 @@ PHONENUMBER_DEFAULT_REGION = 'PL'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/staticfiles/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = (os.path.join('handler/static'),)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'handler/static/handler'),)
 
 LOGIN_REDIRECT_URL = "handler:home"
 LOGOUT_REDIRECT_URL = "handler:home"
