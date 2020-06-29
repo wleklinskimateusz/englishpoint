@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?fa3mily=Poppins">
 <link href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'handler/style.css' %}"/>
 
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
@@ -28,7 +28,7 @@ body {font-size:16px;}
   <div class="w3-container">
     <h1 class="w3-padding-64"><b style="font-family: 'Leckerli One',cursive">EnglishPoint</b></h1>
   </div>
-    {% if user.is_authenticated %}<a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>{% endif %}
+    {% if user.is_authenticated %}<p><b>Hello {{ user.first_name }}!</b></p><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>{% endif %}
   <div class="w3-bar-block">
     <a href="{% url "handler:clients" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Clients Data</a>
     <a href="{% url "handler:students" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Students Data</a>
