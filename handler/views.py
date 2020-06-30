@@ -8,7 +8,7 @@ from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm
 
 def home(request):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     return redirect(reverse_lazy('handler:clients'))
 
@@ -17,7 +17,7 @@ def home(request):
 
 def clients(request):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     template_name = 'clients.html'
     context = {
@@ -28,7 +28,7 @@ def clients(request):
 
 def client(request, client_id):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     my_client = get_object_or_404(Parent, pk=client_id)
     template_name = 'client.html'
@@ -80,7 +80,7 @@ class ClientDeleteView(DeleteView):
 
 def students(request):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     template_name = 'students.html'
     context = {
@@ -91,7 +91,7 @@ def students(request):
 
 def student(request, student_id):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     my_student = get_object_or_404(Student, pk=student_id)
     template_name = 'student.html'
@@ -143,7 +143,7 @@ class StudentDeleteView(DeleteView):
 
 def groups(request):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     template_name = 'groups.html'
     context = {
@@ -154,7 +154,7 @@ def groups(request):
 
 def group(request, group_id):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     my_group = get_object_or_404(StudentGroup, pk=group_id)
     template_name = 'group.html'
@@ -205,7 +205,7 @@ class GroupDeleteView(DeleteView):
 
 def payments(request):
     if not request.user.is_authenticated:
-        return redirect('accounts/login')
+        return redirect('/accounts/login')
 
     template_name = 'payments.html'
     context = {
