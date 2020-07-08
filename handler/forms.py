@@ -1,6 +1,7 @@
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField as Phone
 from .models import Parent, StudentGroup
+from django.utils.timezone import now
 
 
 class DateInput(forms.DateInput):
@@ -33,3 +34,14 @@ class PaymentForm(forms.Form):
     value = forms.FloatField()
     date = forms.DateField(required=False, widget=DateInput)
     comment = forms.CharField(max_length=50, required=False)
+
+
+class AttendanceForm(forms.Form):
+    def __init__(self, students, *args, **kwargs):
+        super(AttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['presence'] = forms.TypedMultipleChoiceField(
+            choices=students,
+            coerce=int
+        )
+    date = forms.DateTimeField(initial=now())
+

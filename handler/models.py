@@ -39,9 +39,14 @@ class Student(models.Model):
     group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, null=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     birthday = models.DateField(null=True, blank=True)
+    present = models.IntegerField(default=0)
+    absent = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.first_name} {self.surname}"
+
+    def attendance(self):
+        return self.present / (self.present + self.absent)
 
 
 class Payment(models.Model):
@@ -56,5 +61,26 @@ class Payment(models.Model):
         else:
             com = ""
         return f"{self.client} zapłacił: {self.value}zł, {self.date}, {com}"
+
+
+class Attendance(models.Model):
+    present = models.BooleanField()
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=now())
+
+    def __str__(self):
+        if self.present:
+            presence = "present"
+        else:
+            presence = 'absent'
+        return f"{self.student} was {presence}, {self.date}"
+
+    def save_attendance(self):
+        stud = Student.objects.get(pk=self.student.id)
+        if self.present:
+            stud.present += 1
+        else:
+            stud.absent += 1
+        stud.save()
 
 
