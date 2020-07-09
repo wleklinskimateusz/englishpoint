@@ -97,6 +97,7 @@ def student(request, student_id):
     template_name = 'student.html'
     context = {
         'student': my_student,
+        'attendances': Attendance.objects.filter(student=my_student)
     }
     return render(request, template_name, context)
 
@@ -251,6 +252,17 @@ class PaymentDeleteView(DeleteView):
 
 
 ###ATENDANCE###
+def attendance(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    template_name = 'attendance.html'
+    context = {
+        'groups': StudentGroup.objects.all(),
+    }
+    return render(request, template_name, context)
+
+
 def check_attendance(request, group_id):
     if not request.user.is_authenticated:
         return redirect('/accounts/login')
@@ -281,12 +293,12 @@ def check_attendance(request, group_id):
                     temp_absence.save_attendance()
                     temp_absence.save()
 
-            return HttpResponseRedirect(reverse_lazy('handler:payments'))
+            return HttpResponseRedirect(reverse_lazy('handler:attendance'))
     else:
-        form = PaymentForm()
+        form = AttendanceForm(students=studs)
     context = {
         'form': form,
-        'title': "Nowa płatność"
+        'title': "Sprawdź obecność"
 
     }
 

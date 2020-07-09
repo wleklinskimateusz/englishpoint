@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ student }}{% endblock %}
+{% block title %}Obecności{% endblock %}
 {% block content %}
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
@@ -13,35 +13,18 @@
 
   <!-- Clients -->
   <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>{{ student }}</b></h1>
+    <h1 class="w3-xxxlarge w3-text-red"><b>Obecności</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
       <div class="w3-row-padding">
-    <div class="w3-half w3-margin-bottom">
+          <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ student }}</li>
-          <a href="{% url 'handler:group' student.group.id %}"><li class="w3-padding-16">Grupa: {{ student.group }}</li></a>
-          <a href="{% url 'handler:client' student.parent.id %}"><li class="w3-padding-16">Rodzic: {{ student.parent }}</li></a>
-        {% if student.birthday %}
-            <li class="w3-padding-16">urodziny: {{ student.birthday }}</li>
-        {% endif %}
-        {% if student.present != 0 or student.absent != 0 %}
-            <li class="w3-padding-16">frekwencja: {{ student.attendance }}%</li>
-        {% endif %}
-      <li class="w3-dark-grey w3-xlarge w3-padding-32">Obecności:</li>
-        {% for attendance in attendances %}
-            <li class="w3-padding-16">{{ attendance }}</li>
+        <li class="w3-dark-grey w3-xlarge w3-padding-32">Statystyka Obecności:</li>
+        {% for group in groups %}
+            <a href="{% url 'handler:group' group.id %}"><li class="w3-padding-16">{{ group }}</li></a>
+            <a href="{% url 'handler:check_attendance' group.id %}" class="btn btn-primary">Sprawdź obecność</a>
         {% endfor %}
-        <!--<li class="w3-padding-16">
-          <h2>$ 199</h2>
-          <span class="w3-opacity">per room</span>
-        </li>
-        <li class="w3-light-grey w3-padding-24">
-          <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-        </li>-->
       </ul>
     </div>
-
-
 
   </div>
 

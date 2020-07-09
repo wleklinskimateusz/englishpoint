@@ -22,6 +22,7 @@
         {% for group in groups %}
             <a href="{% url 'handler:group' group.id %}"><li class="w3-padding-16">{{ group }}</li></a>
         {% endfor %}
+
         <!--<li class="w3-padding-16">
           <h2>$ 199</h2>
           <span class="w3-opacity">per room</span>

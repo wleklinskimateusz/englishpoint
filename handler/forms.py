@@ -37,7 +37,8 @@ class PaymentForm(forms.Form):
 
 
 class AttendanceForm(forms.Form):
-    def __init__(self, students, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        students = kwargs.pop('students')
         super(AttendanceForm, self).__init__(*args, **kwargs)
         self.fields['presence'] = forms.TypedMultipleChoiceField(
             choices=students,

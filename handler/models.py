@@ -46,7 +46,7 @@ class Student(models.Model):
         return f"{self.first_name} {self.surname}"
 
     def attendance(self):
-        return self.present / (self.present + self.absent)
+        return 100 * self.present / (self.present + self.absent)
 
 
 class Payment(models.Model):
