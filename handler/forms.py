@@ -3,6 +3,21 @@ from phonenumber_field.formfields import PhoneNumberField as Phone
 from .models import Parent, StudentGroup
 from django.utils.timezone import now
 
+MONTHS = [
+    (1, 'Styczeń'),
+    (2, 'Luty'),
+    (3, 'Marzec'),
+    (4, 'Kwiecień'),
+    (5, 'Maj'),
+    (6, 'Czerwiec'),
+    (7, 'Lipiec'),
+    (8, 'Sierpień'),
+    (9, 'Wrzesień'),
+    (10, 'Październik'),
+    (11, 'Listopad'),
+    (12, 'Grudzień'),
+]
+
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -27,6 +42,8 @@ class StudentForm(forms.Form):
     group = forms.ModelChoiceField(StudentGroup.objects.all())
     parent = forms.ModelChoiceField(Parent.objects.all())
     birthday = forms.DateField(required=False, widget=DateInput)
+    first_month = forms.ChoiceField(choices=MONTHS, initial=10)
+    monthly_payment = forms.FloatField()
 
 
 class PaymentForm(forms.Form):

@@ -3,6 +3,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.timezone import now
 import weekday_field
 
+PAYMENT_DUE = 15
+
 # Create your models here.
 
 
@@ -11,14 +13,26 @@ class Parent(models.Model):
     surname = models.CharField(max_length=20)
     email = models.CharField(max_length=30, null=True)
     phone_number = PhoneNumberField(null=True, blank=True)
-    paid = models.FloatField(null=True, blank=True)
-    to_pay = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.surname}"
 
+    def to_pay(self):
+        output = 0
+        kids = Student.objects.filter(parent=self.id)
+        for kid in kids:
+            output += kid.monthly_payment * kid.past_months()
+        return output
+
+    def paid(self):
+        output = 0
+        payments = Payment.objects.filter(client=self.id)
+        for payment in payments:
+            output += payment.value
+        return output
+
     def is_even(self):
-        if self.paid == self.to_pay:
+        if self.paid() == self.to_pay():
             return True
         else:
             return False
@@ -39,11 +53,21 @@ class Student(models.Model):
     group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, null=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     birthday = models.DateField(null=True, blank=True)
+    monthly_payment = models.FloatField()
+    first_month = models.IntegerField()
     present = models.IntegerField(default=0)
     absent = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.first_name} {self.surname}"
+
+    def past_months(self):
+        finished_months = now().date.month() - self.first_month - 1
+        if finished_months < 0:
+            finished_months += 12
+        if now().date.day() > PAYMENT_DUE:
+            finished_months += 1
+        return finished_months
 
     def attendance(self):
         return 100 * self.present / (self.present + self.absent)
@@ -52,7 +76,7 @@ class Student(models.Model):
 class Payment(models.Model):
     client = models.ForeignKey(Parent, on_delete=models.CASCADE)
     value = models.FloatField()
-    date = models.DateField(default=now().date())
+    date = models.DateField()
     comment = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -66,14 +90,14 @@ class Payment(models.Model):
 class Attendance(models.Model):
     present = models.BooleanField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    date = models.DateTimeField(default=now())
+    date = models.DateTimeField()
 
     def __str__(self):
         if self.present:
-            presence = "present"
+            presence = "obecny"
         else:
-            presence = 'absent'
-        return f"{self.student} was {presence}, {self.date}"
+            presence = 'nieobecny'
+        return f"{self.student} był {presence}, {self.date}"
 
     def save_attendance(self):
         stud = Student.objects.get(pk=self.student.id)

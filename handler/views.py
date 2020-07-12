@@ -116,6 +116,8 @@ def new_student(request):
             new.group = form.cleaned_data['group']
             new.parent = form.cleaned_data['parent']
             new.birthday = form.cleaned_data['birthday']
+            new.monthly_payment = form.cleaned_data['monthly_payment']
+            new.first_month = form.cleaned_data['first_month']
             new.save()
             return HttpResponseRedirect(reverse_lazy('handler:students'))
     else:
