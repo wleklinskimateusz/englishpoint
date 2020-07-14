@@ -31,11 +31,8 @@ class Parent(models.Model):
             output += payment.value
         return output
 
-    def is_even(self):
-        if self.paid() == self.to_pay():
-            return True
-        else:
-            return False
+    def diff_to_pay(self):
+        return self.to_pay()-self.paid()
 
 
 class StudentGroup(models.Model):
@@ -62,10 +59,10 @@ class Student(models.Model):
         return f"{self.first_name} {self.surname}"
 
     def past_months(self):
-        finished_months = now().date.month() - self.first_month - 1
+        finished_months = now().month - self.first_month - 1
         if finished_months < 0:
             finished_months += 12
-        if now().date.day() > PAYMENT_DUE:
+        if now().date().day > PAYMENT_DUE:
             finished_months += 1
         return finished_months
 

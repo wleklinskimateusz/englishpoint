@@ -26,6 +26,26 @@ def clients(request):
     return render(request, template_name, context)
 
 
+def clients_overdue(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    template_name = 'clients_overdue.html'
+
+    overdues = []
+    for parent in Parent.objects.all():
+        if parent.diff_to_pay() > 0:
+            overdues.append(parent)
+
+    context = {
+        'clients': overdues,
+    }
+
+    return render(request, template_name, context)
+
+
+
 def client(request, client_id):
     if not request.user.is_authenticated:
         return redirect('/accounts/login')
