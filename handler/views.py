@@ -45,7 +45,6 @@ def clients_overdue(request):
     return render(request, template_name, context)
 
 
-
 def client(request, client_id):
     if not request.user.is_authenticated:
         return redirect('/accounts/login')
