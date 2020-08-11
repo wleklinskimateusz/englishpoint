@@ -48,7 +48,7 @@ def clients_overdue(request):
             for parent in overdues:
                 send_mail(
                     "EnglishPoint - zaległość",
-                    f"Dzień dobry, uprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. W razie pytań proszę o kontakt. Wiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.",
+                    f"Dzień dobry, \nuprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. \nW razie pytań proszę o kontakt. \n\nWiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.\n\tEnglishPoint Tychy",
                     "academia@englishpoint.tychy.pl",
                     [parent.email]
                 )
