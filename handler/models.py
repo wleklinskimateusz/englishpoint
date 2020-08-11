@@ -59,11 +59,17 @@ class Student(models.Model):
         return f"{self.first_name} {self.surname}"
 
     def past_months(self):
-        finished_months = now().month - self.first_month - 1
-        if finished_months < 0:
-            finished_months += 12
-        if now().date().day > PAYMENT_DUE:
-            finished_months += 1
+        if now().month >= 9:
+            finished_months = now().month - self.first_month - 1
+            if now().date().day > PAYMENT_DUE:
+                finished_months += 1
+        elif now().month <= 6:
+            finished_months = 12 - self.first_month + now().month
+            if now().date().day > PAYMENT_DUE:
+                finished_months += 1
+        else:
+            finished_months = 13 - self.first_month + 6
+
         return finished_months
 
     def attendance(self):

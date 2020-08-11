@@ -10,8 +10,6 @@ MONTHS = [
     (4, 'Kwiecień'),
     (5, 'Maj'),
     (6, 'Czerwiec'),
-    (7, 'Lipiec'),
-    (8, 'Sierpień'),
     (9, 'Wrzesień'),
     (10, 'Październik'),
     (11, 'Listopad'),
@@ -42,7 +40,7 @@ class StudentForm(forms.Form):
     group = forms.ModelChoiceField(StudentGroup.objects.all())
     parent = forms.ModelChoiceField(Parent.objects.all())
     birthday = forms.DateField(required=False, widget=DateInput)
-    first_month = forms.ChoiceField(choices=MONTHS, initial=10)
+    first_month = forms.ChoiceField(choices=MONTHS, initial=9)
     monthly_payment = forms.FloatField()
 
 
