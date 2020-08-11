@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Over Due{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
@@ -30,6 +31,13 @@
           <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
         </li>-->
       </ul>
+    </div>
+      <div class="my_form">
+        <form action="" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary">Wyślij maila z informacją</button>
+        </form>
     </div>
 
   </div>

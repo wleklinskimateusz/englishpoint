@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
+from django.forms import Form
 from .models import *
 from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm
+from django.core.mail import send_mail
 # Create your views here.
 
 
@@ -33,13 +35,30 @@ def clients_overdue(request):
 
     template_name = 'clients_overdue.html'
 
+
+
     overdues = []
     for parent in Parent.objects.all():
         if parent.diff_to_pay() > 0:
             overdues.append(parent)
 
+    if request.method == "POST":
+        form = Form(request.POST)
+        if form.is_valid():
+            for parent in overdues:
+                send_mail(
+                    "EnglishPoint - zaległość",
+                    f"Dzień dobry, uprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. W razie pytań proszę o kontakt. Wiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.",
+                    "academia@englishpoint.tychy.pl",
+                    [parent.email]
+                )
+
+            return HttpResponseRedirect(reverse_lazy('handler:payments'))
+    else:
+        form = Form()
     context = {
         'clients': overdues,
+        'form': form,
     }
 
     return render(request, template_name, context)

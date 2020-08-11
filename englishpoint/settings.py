@@ -141,3 +141,12 @@ LOGIN_REDIRECT_URL = "handler:home"
 LOGOUT_REDIRECT_URL = "handler:home"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Email setting
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'englishpointacademia@gmail.com'
+EMAIL_HOST_PASSWORD = 'Academia1403'
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
