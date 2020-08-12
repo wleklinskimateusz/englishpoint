@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}{{ client }}{% endblock %}
+{% load crispy_forms_tags %}
 {% block content %}
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
@@ -29,6 +30,9 @@
         {% for kid in kids %}
             <a href="{% url 'handler:student' kid.id %}"><li class="w3-padding-16">{{ kid }}</li></a>
         {% endfor %}
+      {% if haventpaid %}
+          <li class="w3-dark-grey w3-padding-32">Zaległość: {{ client.diff_to_pay|floatformat:2 }}zł</li>
+      {%  endif %}
         <!--<li class="w3-padding-16">
           <h2>$ 199</h2>
           <span class="w3-opacity">per room</span>
@@ -37,8 +41,20 @@
           <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
         </li>-->
       </ul>
+    {% if form %}
+    <div class="my_form">
+        <form action="" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary">Wyślij</button>
+        </form>
+    </div>
+    {% endif %}
     </div>
         <a href="{% url 'handler:delete_client' client.id %}" class="btn btn-danger">Usuń Rodzica</a>
+      {% if not form %}
+      <a href="{% url 'handler:send_mail' client.id %}" class="btn btn-warning">Wyślij e-mail</a>
+      {% endif %}
 
   </div>
 

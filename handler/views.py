@@ -3,7 +3,7 @@ from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from django.forms import Form
 from .models import *
-from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm
+from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm
 from django.core.mail import send_mail
 # Create your views here.
 
@@ -48,10 +48,12 @@ def clients_overdue(request):
             for parent in overdues:
                 send_mail(
                     "EnglishPoint - zaległość",
-                    f"Dzień dobry, \nuprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. \nW razie pytań proszę o kontakt. \n\nWiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.\n\tEnglishPoint Tychy",
+                    f"Dzień dobry, \nuprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. \nW razie pytań proszę o kontakt. \n\nWiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.\n\n\tEnglishPoint Tychy",
                     "academia@englishpoint.tychy.pl",
                     [parent.email]
                 )
+                parent.last_mail = now().date()
+                parent.save()
 
             return HttpResponseRedirect(reverse_lazy('handler:payments'))
     else:
@@ -74,6 +76,7 @@ def client(request, client_id):
     context = {
         'client': my_client,
         'kids': kids,
+        'haventpaid': my_client.diff_to_pay() > 0,
     }
     return render(request, template_name, context)
 
@@ -101,6 +104,37 @@ def new_client(request):
 
     }
 
+    return render(request, template_name, context)
+
+
+def mail_to_client(request, client_id):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    template_name = "client.html"
+
+    my_client = get_object_or_404(Parent, pk=client_id)
+    if request.method == 'POST':
+        form = SendMailForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            recipients = [my_client.email]
+            if form.cleaned_data['send_copy_to_me']:
+                if request.user.email:
+                    recipients.append(request.user.email)
+            send_mail(subject, message, 'englishpointacademia@gmail.com', recipients)
+
+            return HttpResponseRedirect(reverse_lazy('handler:clients'))
+    else:
+        form = SendMailForm()
+    kids = Student.objects.filter(parent=my_client)
+    context = {
+        'client': my_client,
+        'kids': kids,
+        'haventpaid': my_client.diff_to_pay() > 0,
+        'form': form,
+    }
     return render(request, template_name, context)
 
 

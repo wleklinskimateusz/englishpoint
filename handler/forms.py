@@ -61,3 +61,9 @@ class AttendanceForm(forms.Form):
         )
     date = forms.DateTimeField(initial=now())
 
+
+class SendMailForm(forms.Form):
+    subject = forms.CharField(max_length=20)
+    message = forms.CharField(widget=forms.Textarea)
+    send_copy_to_me = forms.BooleanField(initial=True, required=False)
+
