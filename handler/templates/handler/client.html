@@ -52,6 +52,7 @@
     {% endif %}
     </div>
         <a href="{% url 'handler:delete_client' client.id %}" class="btn btn-danger">Usuń Rodzica</a>
+        <a href="{% url 'handler:client_edit' client.id %}" class="btn btn-primary">Edytuj</a>
       {% if not form %}
       <a href="{% url 'handler:send_mail' client.id %}" class="btn btn-warning">Wyślij e-mail</a>
       {% endif %}

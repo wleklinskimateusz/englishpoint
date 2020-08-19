@@ -19,7 +19,7 @@
     <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
         <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ group }}</li>
-          <li class="w3-padding-16">czas trwania lekcji: {{ group.lesson_duration }}</li>
+          <li class="w3-padding-16">czas trwania lekcji: {{ minutes }} min</li>
           <li class="w3-padding-16">ilość lekcji: {{ group.amount_lessons }}</li>
           <li class="w3-dark-grey w3-padding-32">Dzieci:</li>
           {% for student in students %}
@@ -34,7 +34,8 @@
         </li>-->
       </ul>
     </div>
-
+    <a href="{% url 'handler:delete_group' group.id %}" class="btn btn-danger">Usuń Grupę</a>
+    <a href="{% url 'handler:edit_group' group.id %}" class="btn btn-primary">Edytuj</a>
 
   </div>
 

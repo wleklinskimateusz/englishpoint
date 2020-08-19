@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
-from django.views.generic import DeleteView
+from django.views.generic import DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.forms import Form
 from .models import *
 from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm
 from django.core.mail import send_mail
+from datetime import timedelta
 # Create your views here.
 
 
@@ -35,8 +36,6 @@ def clients_overdue(request):
 
     template_name = 'clients_overdue.html'
 
-
-
     overdues = []
     for parent in Parent.objects.all():
         if parent.diff_to_pay() > 0:
@@ -48,7 +47,12 @@ def clients_overdue(request):
             for parent in overdues:
                 send_mail(
                     "EnglishPoint - zaległość",
-                    f"Dzień dobry, \nuprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}. \nW razie pytań proszę o kontakt. \n\nWiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.\n\n\tEnglishPoint Tychy",
+                    f"""Dzień dobry, 
+uprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}.
+W razie pytań proszę o kontakt.
+
+Wiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.
+\tEnglishPoint Tychy""",
                     "academia@englishpoint.tychy.pl",
                     [parent.email]
                 )
@@ -147,6 +151,46 @@ class ClientDeleteView(DeleteView):
     context_object_name = 'object'
     success_url = reverse_lazy('handler:clients')
 
+
+def client_update(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    my_client = get_object_or_404(Parent, pk=pk)
+    template_name = 'form.html'
+    if request.method == 'POST':
+        form = ParentForm(request.POST)
+        if form.is_valid():
+            my_client.first_name = form.cleaned_data['first_name']
+            my_client.surname = form.cleaned_data['surname']
+            my_client.email = form.cleaned_data['email']
+            my_client.phone_number = form.cleaned_data['phone_number']
+            my_client.save()
+            return HttpResponseRedirect(reverse_lazy('handler:client', kwargs={"client_id": my_client.id}))
+    else:
+        form = ParentForm()
+    context = {
+        'form': form,
+        'title': "Edytuj dane"
+
+    }
+
+    return render(request, template_name, context)
+
+
+class ClientUpdate(UpdateView):
+    model = Parent
+    template_name = 'form.html'
+    fields = [
+        'first_name',
+        'surname',
+        'email',
+        'phone_number'
+    ]
+
+    def get_success_url(self):
+        return reverse_lazy('handler:client', kwargs={'client_id': self.kwargs['pk']})
+
 ###STUDENTS###
 
 
@@ -213,6 +257,23 @@ class StudentDeleteView(DeleteView):
     success_url = reverse_lazy('handler:students')
 
 
+class StudentUpdate(UpdateView):
+    model = Student
+    template_name = 'form.html'
+    fields = [
+        'first_name',
+        'surname',
+        'group',
+        'parent',
+        'birthday',
+        'monthly_payment',
+        'first_month',
+    ]
+
+    def get_success_url(self):
+        return reverse_lazy('handler:student', kwargs={'student_id': self.kwargs['pk']})
+
+
 ###GROUPS###
 
 
@@ -236,6 +297,7 @@ def group(request, group_id):
     context = {
         'group': my_group,
         'students': Student.objects.filter(group=my_group),
+        'minutes': my_group.lesson_duration.seconds / 60,
     }
     return render(request, template_name, context)
 
@@ -250,7 +312,7 @@ def new_group(request):
         if form.is_valid():
             new = StudentGroup()
             new.name = form.cleaned_data['name']
-            new.lesson_duration = form.cleaned_data['lesson_duration']
+            new.lesson_duration = timedelta(minutes=form.cleaned_data['lesson_duration'])
             new.amount_lessons = form.cleaned_data['amount_lessons']
             new.save()
             return HttpResponseRedirect(reverse_lazy('handler:groups'))
@@ -267,12 +329,26 @@ def new_group(request):
 
 class GroupDeleteView(DeleteView):
     """
-    class for deleting Student Object
+    class for deleting StudentGroup Object
     """
     model = StudentGroup
     template_name = 'delete.html'
     context_object_name = 'object'
     success_url = reverse_lazy('handler:groups')
+
+
+class GroupUpdate(UpdateView):
+    model = StudentGroup
+    template_name = 'form.html'
+    fields = [
+        'name',
+        'lesson_duration',
+        'amount_lessons'
+    ]
+    extra_context = {'title': "Edycja Grupy"}
+
+    def get_success_url(self):
+        return reverse_lazy('handler:group', kwargs={'group_id': self.kwargs['pk']})
 
 
 ###PAYMENTS###
