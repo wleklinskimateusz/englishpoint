@@ -22,7 +22,7 @@ class Parent(models.Model):
         output = 0
         kids = Student.objects.filter(parent=self.id)
         for kid in kids:
-            output += kid.monthly_payment * kid.past_months()
+            output += kid.monthly_payment * kid.past_months() - kid.corrections()
         return output
 
     def paid(self):
@@ -73,6 +73,13 @@ class Student(models.Model):
 
         return finished_months
 
+    def corrections(self):
+        output = 0
+        cors = Correction.objects.filter(kid=self.id)
+        for cor in cors:
+            output += cor.value
+        return output
+
     def attendance(self):
         return 100 * self.present / (self.present + self.absent)
 
@@ -111,4 +118,7 @@ class Attendance(models.Model):
             stud.absent += 1
         stud.save()
 
+class Correction(models.Model):
+    kid = models.ForeignKey(Student, on_delete=models.CASCADE)
+    value = models.FloatField()
 

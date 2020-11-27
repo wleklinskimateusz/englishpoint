@@ -40,7 +40,8 @@
         </li>-->
       </ul>
     </div>
-
+    <a href="{% url 'handler:delete_student' student.id %}" class="btn btn-danger">Usuń Ucznia</a>
+    <a href="{% url 'handler:edit_student' student.id %}" class="btn btn-primary">Edytuj</a>
 
 
   </div>
