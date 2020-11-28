@@ -87,7 +87,7 @@ class Student(models.Model):
 class Payment(models.Model):
     client = models.ForeignKey(Parent, on_delete=models.CASCADE)
     value = models.FloatField()
-    date = models.DateField()
+    date = models.DateField(null=True, blank=True)
     comment = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -121,4 +121,11 @@ class Attendance(models.Model):
 class Correction(models.Model):
     kid = models.ForeignKey(Student, on_delete=models.CASCADE)
     value = models.FloatField()
+    date = models.DateField(null=True, blank=True)
+    info = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.kid} ma korektę {self.value}zł"
+
+
 

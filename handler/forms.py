@@ -1,6 +1,6 @@
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField as Phone
-from .models import Parent, StudentGroup
+from .models import Parent, StudentGroup, Student
 from django.utils.timezone import now
 
 MONTHS = [
@@ -49,6 +49,12 @@ class PaymentForm(forms.Form):
     value = forms.FloatField(label="Wartość")
     date = forms.DateField(required=False, widget=DateInput, label='Data')
     comment = forms.CharField(max_length=50, required=False, label='Komentarz')
+
+class CorrectionForm(forms.Form):
+    kid = forms.ModelChoiceField(Student.objects.all(), label="Uczeń")
+    value = forms.FloatField(label="Kwota")
+    date = forms.DateField(required=False, widget=DateInput, label='Data')
+    info = forms.CharField(max_length=50, required=False, label='Komentarz')
 
 
 class AttendanceForm(forms.Form):
