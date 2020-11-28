@@ -22,7 +22,7 @@ class Parent(models.Model):
         output = 0
         kids = Student.objects.filter(parent=self.id)
         for kid in kids:
-            output += kid.monthly_payment * kid.past_months()
+            output += kid.monthly_payment * kid.past_months() - kid.corrections()
         return output
 
     def paid(self):
@@ -73,6 +73,13 @@ class Student(models.Model):
 
         return finished_months
 
+    def corrections(self):
+        output = 0
+        cors = Correction.objects.filter(kid=self.id)
+        for cor in cors:
+            output += cor.value
+        return output
+
     def attendance(self):
         return 100 * self.present / (self.present + self.absent)
 
@@ -80,7 +87,7 @@ class Student(models.Model):
 class Payment(models.Model):
     client = models.ForeignKey(Parent, on_delete=models.CASCADE)
     value = models.FloatField()
-    date = models.DateField()
+    date = models.DateField(null=True, blank=True)
     comment = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -110,5 +117,15 @@ class Attendance(models.Model):
         else:
             stud.absent += 1
         stud.save()
+
+class Correction(models.Model):
+    kid = models.ForeignKey(Student, on_delete=models.CASCADE)
+    value = models.FloatField()
+    date = models.DateField(null=True, blank=True)
+    info = models.CharField(max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.kid} ma korektę {self.value}zł"
+
 
 

@@ -3,7 +3,7 @@ from django.views.generic import DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.forms import Form
 from .models import *
-from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm
+from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm, CorrectionForm
 from django.core.mail import send_mail
 from datetime import timedelta
 # Create your views here.
@@ -400,6 +400,43 @@ class PaymentDeleteView(DeleteView):
     context_object_name = 'object'
     success_url = reverse_lazy('handler:payments')
 
+
+
+###CORRECTION###
+def corrections(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    template_name = 'corrections.html'
+    context = {
+        'cors': Correction.objects.all(),
+    }
+    return render(request, template_name, context)
+
+def new_correction(request):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+
+    template_name = 'form.html'
+    if request.method == 'POST':
+        form = CorrectionForm(request.POST)
+        if form.is_valid():
+            new = Correction()
+            new.kid = form.cleaned_data['kid']
+            new.value = form.cleaned_data['value']
+            new.date = form.cleaned_data['date']
+            new.info = form.cleaned_data['info']
+            new.save()
+            return HttpResponseRedirect(reverse_lazy('handler:corrections'))
+    else:
+        form = CorrectionForm()
+    context = {
+        'form': form,
+        'title': "Nowa korekta"
+
+    }
+
+    return render(request, template_name, context)
 
 ###ATENDANCE###
 def attendance(request):

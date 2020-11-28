@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ student }}{% endblock %}
+{% block title %}Korekty{% endblock %}
 {% block content %}
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
@@ -13,23 +13,14 @@
 
   <!-- Clients -->
   <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-blue"><b>{{ student }}</b></h1>
+    <h1 class="w3-xxxlarge w3-text-blue"><b>Korekty</b></h1>
     <hr style="width:50px;border:5px solid blue" class="w3-round">
       <div class="w3-row-padding">
     <div class="w3-half w3-margin-bottom">
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ student }}</li>
-          <a href="{% url 'handler:group' student.group.id %}"><li class="w3-padding-16">Grupa: {{ student.group }}</li></a>
-          <a href="{% url 'handler:client' student.parent.id %}"><li class="w3-padding-16">Rodzic: {{ student.parent }}</li></a>
-        {% if student.birthday %}
-            <li class="w3-padding-16">urodziny: {{ student.birthday }}</li>
-        {% endif %}
-        {% if student.present != 0 or student.absent != 0 %}
-            <li class="w3-padding-16">frekwencja: {{ student.attendance }}%</li>
-        {% endif %}
-      <li class="w3-dark-grey w3-xlarge w3-padding-32">Obecności:</li>
-        {% for attendance in attendances %}
-            <li class="w3-padding-16">{{ attendance }}</li>
+        <li class="w3-dark-grey w3-xlarge w3-padding-32">Korekty:</li>
+        {% for cor in cors %}
+        <li class="w3-padding-16">{{ cor }}</li>
         {% endfor %}
         <!--<li class="w3-padding-16">
           <h2>$ 199</h2>
@@ -40,13 +31,11 @@
         </li>-->
       </ul>
     </div>
-    <a href="{% url 'handler:delete_student' student.id %}" class="btn btn-danger">Usuń Ucznia</a>
-    <a href="{% url 'handler:edit_student' student.id %}" class="btn btn-primary">Edytuj</a>
 
-
+    <a href="{% url 'handler:new_correction' %}" class="btn btn-primary">Dodaj Korektę</a>
   </div>
 
-
+ 
 
   <!-- Contact
   <div class="w3-container" id="contact" style="margin-top:75px">
