@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'phonenumber_field',
+    "crispy_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -140,8 +141,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'handler/static'),)
 LOGIN_REDIRECT_URL = "handler:home"
 LOGOUT_REDIRECT_URL = "handler:home"
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Email setting
 
 EMAIL_HOST = 'smtp.gmail.com'

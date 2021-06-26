@@ -3,11 +3,25 @@
 {% load crispy_forms_tags %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-    <div class="my_form">
-        <form action="" method="POST">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">Dodaj</button>
-        </form>
+    <br><br><br><br>
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-4 col-md-6">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h4 class="card-title text-primary display-6">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="my_form">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary">Dodaj</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
+
 {% endblock %}

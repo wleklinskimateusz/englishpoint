@@ -6,487 +6,497 @@ from .models import *
 from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm, CorrectionForm
 from django.core.mail import send_mail
 from datetime import timedelta
+
+
 # Create your views here.
 
 
 def home(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	return redirect(reverse_lazy('handler:clients'))
 
-    return redirect(reverse_lazy('handler:clients'))
 
 ###CLIENTS###
 
 
 def clients(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'clients.html'
-    context = {
-        'clients': Parent.objects.all(),
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'clients.html'
+	context = {
+		'clients': Parent.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
 
 def clients_overdue(request):
-
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'clients_overdue.html'
-
-    overdues = []
-    for parent in Parent.objects.all():
-        if parent.diff_to_pay() > 0:
-            overdues.append(parent)
-
-    if request.method == "POST":
-        form = Form(request.POST)
-        if form.is_valid():
-            for parent in overdues:
-                send_mail(
-                    "EnglishPoint - zaległość",
-                    f"""Dzień dobry, 
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'clients_overdue.html'
+	
+	overdues = []
+	for parent in Parent.objects.all():
+		if parent.diff_to_pay() > 0:
+			overdues.append(parent)
+	
+	if request.method == "POST":
+		form = Form(request.POST)
+		if form.is_valid():
+			for parent in overdues:
+				send_mail(
+					"EnglishPoint - zaległość",
+					f"""Dzień dobry,
 uprzejmię informuję, że zalega Pan/Pani z płatnością za usługi edukacyjne firmy EnglishPoint w wysokości: {parent.diff_to_pay()}.
 W razie pytań proszę o kontakt.
 
 Wiadomość została wygenerowana automatycznie, proszę na nią nie odpowiadać.
 \tEnglishPoint Tychy""",
-                    "academia@englishpoint.tychy.pl",
-                    [parent.email]
-                )
-                parent.last_mail = now().date()
-                parent.save()
-
-            return HttpResponseRedirect(reverse_lazy('handler:payments'))
-    else:
-        form = Form()
-    context = {
-        'clients': overdues,
-        'form': form,
-    }
-
-    return render(request, template_name, context)
+					"academia@englishpoint.tychy.pl",
+					[parent.email]
+				)
+				parent.last_mail = now().date()
+				parent.save()
+			
+			return HttpResponseRedirect(reverse_lazy('handler:payments'))
+	else:
+		form = Form()
+	context = {
+		'clients': overdues,
+		'form': form,
+	}
+	
+	return render(request, template_name, context)
 
 
 def client(request, client_id):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    my_client = get_object_or_404(Parent, pk=client_id)
-    template_name = 'client.html'
-    kids = Student.objects.filter(parent=my_client)
-    context = {
-        'client': my_client,
-        'kids': kids,
-        'haventpaid': my_client.diff_to_pay() > 0,
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	my_client = get_object_or_404(Parent, pk=client_id)
+	template_name = 'client.html'
+	kids = Student.objects.filter(parent=my_client)
+	context = {
+		'client': my_client,
+		'kids': kids,
+		'haventpaid': my_client.diff_to_pay() > 0,
+	}
+	return render(request, template_name, context)
 
 
 def new_client(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = ParentForm(request.POST)
-        if form.is_valid():
-            new = Parent()
-            new.first_name = form.cleaned_data['first_name']
-            new.surname = form.cleaned_data['surname']
-            new.email = form.cleaned_data['email']
-            new.phone_number = form.cleaned_data['phone_number']
-            new.save()
-            return HttpResponseRedirect(reverse_lazy('handler:clients'))
-    else:
-        form = ParentForm()
-    context = {
-        'form': form,
-        'title': "Nowy Rodzic"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = ParentForm(request.POST)
+		if form.is_valid():
+			new = Parent()
+			new.first_name = form.cleaned_data['first_name']
+			new.surname = form.cleaned_data['surname']
+			new.email = form.cleaned_data['email']
+			new.phone_number = form.cleaned_data['phone_number']
+			new.save()
+			return HttpResponseRedirect(reverse_lazy('handler:clients'))
+	else:
+		form = ParentForm()
+	context = {
+		'form': form,
+		'title': "Nowy Rodzic"
+		
+	}
+	
+	return render(request, template_name, context)
 
 
 def mail_to_client(request, client_id):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = "client.html"
-
-    my_client = get_object_or_404(Parent, pk=client_id)
-    if request.method == 'POST':
-        form = SendMailForm(request.POST)
-        if form.is_valid():
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-            recipients = [my_client.email]
-            if form.cleaned_data['send_copy_to_me']:
-                if request.user.email:
-                    recipients.append(request.user.email)
-            send_mail(subject, message, 'englishpointacademia@gmail.com', recipients)
-
-            return HttpResponseRedirect(reverse_lazy('handler:clients'))
-    else:
-        form = SendMailForm()
-    kids = Student.objects.filter(parent=my_client)
-    context = {
-        'client': my_client,
-        'kids': kids,
-        'haventpaid': my_client.diff_to_pay() > 0,
-        'form': form,
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = "client.html"
+	
+	my_client = get_object_or_404(Parent, pk=client_id)
+	if request.method == 'POST':
+		form = SendMailForm(request.POST)
+		if form.is_valid():
+			subject = form.cleaned_data['subject']
+			message = form.cleaned_data['message']
+			recipients = [my_client.email]
+			if form.cleaned_data['send_copy_to_me']:
+				if request.user.email:
+					recipients.append(request.user.email)
+			send_mail(subject, message, 'englishpointacademia@gmail.com', recipients)
+			
+			return HttpResponseRedirect(reverse_lazy('handler:clients'))
+	else:
+		form = SendMailForm()
+	kids = Student.objects.filter(parent=my_client)
+	context = {
+		'client': my_client,
+		'kids': kids,
+		'haventpaid': my_client.diff_to_pay() > 0,
+		'form': form,
+	}
+	return render(request, template_name, context)
 
 
 class ClientDeleteView(DeleteView):
-    """
-    class for deleting GoGame Object
-    """
-    model = Parent
-    template_name = 'delete.html'
-    context_object_name = 'object'
-    success_url = reverse_lazy('handler:clients')
+	"""
+	class for deleting GoGame Object
+	"""
+	model = Parent
+	template_name = 'delete.html'
+	context_object_name = 'object'
+	success_url = reverse_lazy('handler:clients')
 
 
 def client_update(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    my_client = get_object_or_404(Parent, pk=pk)
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = ParentForm(request.POST)
-        if form.is_valid():
-            my_client.first_name = form.cleaned_data['first_name']
-            my_client.surname = form.cleaned_data['surname']
-            my_client.email = form.cleaned_data['email']
-            my_client.phone_number = form.cleaned_data['phone_number']
-            my_client.save()
-            return HttpResponseRedirect(reverse_lazy('handler:client', kwargs={"client_id": my_client.id}))
-    else:
-        form = ParentForm()
-    context = {
-        'form': form,
-        'title': "Edytuj dane"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	my_client = get_object_or_404(Parent, pk=pk)
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = ParentForm(request.POST)
+		if form.is_valid():
+			my_client.first_name = form.cleaned_data['first_name']
+			my_client.surname = form.cleaned_data['surname']
+			my_client.email = form.cleaned_data['email']
+			my_client.phone_number = form.cleaned_data['phone_number']
+			my_client.save()
+			return HttpResponseRedirect(reverse_lazy('handler:client', kwargs={"client_id": my_client.id}))
+	else:
+		form = ParentForm()
+	context = {
+		'form': form,
+		'title': "Edytuj dane"
+		
+	}
+	
+	return render(request, template_name, context)
 
 
 class ClientUpdate(UpdateView):
-    model = Parent
-    template_name = 'form.html'
-    fields = [
-        'first_name',
-        'surname',
-        'email',
-        'phone_number'
-    ]
+	model = Parent
+	template_name = 'form.html'
+	fields = [
+		'first_name',
+		'surname',
+		'email',
+		'phone_number'
+	]
+	
+	def get_success_url(self):
+		return reverse_lazy('handler:client', kwargs={'client_id': self.kwargs['pk']})
 
-    def get_success_url(self):
-        return reverse_lazy('handler:client', kwargs={'client_id': self.kwargs['pk']})
 
 ###STUDENTS###
 
 
 def students(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'students.html'
-    context = {
-        'students': Student.objects.all(),
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'students.html'
+	context = {
+		'students': Student.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
 
 def student(request, student_id):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    my_student = get_object_or_404(Student, pk=student_id)
-    template_name = 'student.html'
-    context = {
-        'student': my_student,
-        'attendances': Attendance.objects.filter(student=my_student)
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	my_student = get_object_or_404(Student, pk=student_id)
+	template_name = 'student.html'
+	context = {
+		'student': my_student,
+		'attendances': Attendance.objects.filter(student=my_student),
+	}
+	return render(request, template_name, context)
 
 
 def new_student(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = StudentForm(request.POST)
-        if form.is_valid():
-            new = Student()
-            new.first_name = form.cleaned_data['first_name']
-            new.surname = form.cleaned_data['surname']
-            new.group = form.cleaned_data['group']
-            new.parent = form.cleaned_data['parent']
-            new.birthday = form.cleaned_data['birthday']
-            new.monthly_payment = form.cleaned_data['monthly_payment']
-            new.first_month = form.cleaned_data['first_month']
-            new.save()
-            return HttpResponseRedirect(reverse_lazy('handler:students'))
-    else:
-        form = StudentForm()
-    context = {
-        'form': form,
-        'title': "Nowe dziecko"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = StudentForm(request.POST)
+		if form.is_valid():
+			new = Student()
+			new.first_name = form.cleaned_data['first_name']
+			new.surname = form.cleaned_data['surname']
+			new.group = form.cleaned_data['group']
+			new.parent = form.cleaned_data['parent']
+			new.birthday = form.cleaned_data['birthday']
+			new.monthly_payment = form.cleaned_data['monthly_payment']
+			new.first_month = form.cleaned_data['first_month']
+			new.save()
+			return HttpResponseRedirect(reverse_lazy('handler:students'))
+	else:
+		form = StudentForm()
+	context = {
+		'form': form,
+		'title': "Nowe dziecko"
+		
+	}
+	
+	return render(request, template_name, context)
 
 
 class StudentDeleteView(DeleteView):
-    """
-    class for deleting Student Object
-    """
-    model = Student
-    template_name = 'delete.html'
-    context_object_name = 'object'
-    success_url = reverse_lazy('handler:students')
+	"""
+	class for deleting Student Object
+	"""
+	model = Student
+	template_name = 'delete.html'
+	context_object_name = 'object'
+	success_url = reverse_lazy('handler:students')
 
 
 class StudentUpdate(UpdateView):
-    model = Student
-    template_name = 'form.html'
-    fields = [
-        'first_name',
-        'surname',
-        'group',
-        'parent',
-        'birthday',
-        'monthly_payment',
-        'first_month',
-    ]
-
-    def get_success_url(self):
-        return reverse_lazy('handler:student', kwargs={'student_id': self.kwargs['pk']})
+	model = Student
+	template_name = 'form.html'
+	fields = [
+		'first_name',
+		'surname',
+		'group',
+		'parent',
+		'birthday',
+		'monthly_payment',
+		'first_month',
+	]
+	
+	def get_success_url(self):
+		return reverse_lazy('handler:student', kwargs={'student_id': self.kwargs['pk']})
 
 
 ###GROUPS###
 
 
 def groups(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'groups.html'
-    context = {
-        'groups': StudentGroup.objects.all(),
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'groups.html'
+	context = {
+		'groups': StudentGroup.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
 
 def group(request, group_id):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    my_group = get_object_or_404(StudentGroup, pk=group_id)
-    template_name = 'group.html'
-    context = {
-        'group': my_group,
-        'students': Student.objects.filter(group=my_group),
-        'minutes': my_group.lesson_duration.seconds / 60,
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	my_group = get_object_or_404(StudentGroup, pk=group_id)
+	template_name = 'group.html'
+	context = {
+		'group': my_group,
+		'students': Student.objects.filter(group=my_group),
+		'minutes': my_group.lesson_duration.seconds / 60,
+	}
+	return render(request, template_name, context)
 
 
 def new_group(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = StudentGroupForm(request.POST)
-        if form.is_valid():
-            new = StudentGroup()
-            new.name = form.cleaned_data['name']
-            new.lesson_duration = timedelta(minutes=form.cleaned_data['lesson_duration'])
-            new.amount_lessons = form.cleaned_data['amount_lessons']
-            new.save()
-            return HttpResponseRedirect(reverse_lazy('handler:groups'))
-    else:
-        form = StudentGroupForm()
-    context = {
-        'form': form,
-        'title': "Nowa grupa"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = StudentGroupForm(request.POST)
+		if form.is_valid():
+			new = StudentGroup()
+			new.name = form.cleaned_data['name']
+			new.lesson_duration = timedelta(minutes=form.cleaned_data['lesson_duration'])
+			new.amount_lessons = form.cleaned_data['amount_lessons']
+			new.save()
+			return HttpResponseRedirect(reverse_lazy('handler:groups'))
+	else:
+		form = StudentGroupForm()
+	context = {
+		'form': form,
+		'title': "Nowa grupa"
+		
+	}
+	
+	return render(request, template_name, context)
 
 
 class GroupDeleteView(DeleteView):
-    """
-    class for deleting StudentGroup Object
-    """
-    model = StudentGroup
-    template_name = 'delete.html'
-    context_object_name = 'object'
-    success_url = reverse_lazy('handler:groups')
+	"""
+	class for deleting StudentGroup Object
+	"""
+	model = StudentGroup
+	template_name = 'delete.html'
+	context_object_name = 'object'
+	success_url = reverse_lazy('handler:groups')
 
 
 class GroupUpdate(UpdateView):
-    model = StudentGroup
-    template_name = 'form.html'
-    fields = [
-        'name',
-        'lesson_duration',
-        'amount_lessons'
-    ]
-    extra_context = {'title': "Edycja Grupy"}
-
-    def get_success_url(self):
-        return reverse_lazy('handler:group', kwargs={'group_id': self.kwargs['pk']})
+	model = StudentGroup
+	template_name = 'form.html'
+	fields = [
+		'name',
+		'lesson_duration',
+		'amount_lessons'
+	]
+	extra_context = {'title': "Edycja Grupy"}
+	
+	def get_success_url(self):
+		return reverse_lazy('handler:group', kwargs={'group_id': self.kwargs['pk']})
 
 
 ###PAYMENTS###
 
 
 def payments(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'payments.html'
-    context = {
-        'payments': Payment.objects.all(),
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'payments.html'
+	context = {
+		'payments': Payment.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
 
 def new_payment(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            new = Payment()
-            new.client = form.cleaned_data['client']
-            new.value = form.cleaned_data['value']
-            new.date = form.cleaned_data['date']
-            new.comment = form.cleaned_data['comment']
-            new.save()
-            return HttpResponseRedirect(reverse_lazy('handler:payments'))
-    else:
-        form = PaymentForm()
-    context = {
-        'form': form,
-        'title': "Nowa płatność"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = PaymentForm(request.POST)
+		if form.is_valid():
+			new = Payment()
+			new.client = form.cleaned_data['client']
+			new.value = form.cleaned_data['value']
+			new.date = form.cleaned_data['date']
+			new.comment = form.cleaned_data['comment']
+			new.save()
+			return HttpResponseRedirect(reverse_lazy('handler:payments'))
+	else:
+		form = PaymentForm()
+	context = {
+		'form': form,
+		'title': "Nowa płatność"
+		
+	}
+	
+	return render(request, template_name, context)
 
 
 class PaymentDeleteView(DeleteView):
-    """
-    class for deleting Student Object
-    """
-    model = Payment
-    template_name = 'delete.html'
-    context_object_name = 'object'
-    success_url = reverse_lazy('handler:payments')
-
+	"""
+	class for deleting Student Object
+	"""
+	model = Payment
+	template_name = 'delete.html'
+	context_object_name = 'object'
+	success_url = reverse_lazy('handler:payments')
 
 
 ###CORRECTION###
 def corrections(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'corrections.html'
+	context = {
+		'cors': Correction.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
-    template_name = 'corrections.html'
-    context = {
-        'cors': Correction.objects.all(),
-    }
-    return render(request, template_name, context)
 
 def new_correction(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'form.html'
+	if request.method == 'POST':
+		form = CorrectionForm(request.POST)
+		if form.is_valid():
+			new = Correction()
+			new.kid = form.cleaned_data['kid']
+			new.value = form.cleaned_data['value']
+			new.date = form.cleaned_data['date']
+			new.info = form.cleaned_data['info']
+			new.save()
+			return HttpResponseRedirect(reverse_lazy('handler:corrections'))
+	else:
+		form = CorrectionForm()
+	context = {
+		'form': form,
+		'title': "Nowa korekta"
+		
+	}
+	
+	return render(request, template_name, context)
 
-    template_name = 'form.html'
-    if request.method == 'POST':
-        form = CorrectionForm(request.POST)
-        if form.is_valid():
-            new = Correction()
-            new.kid = form.cleaned_data['kid']
-            new.value = form.cleaned_data['value']
-            new.date = form.cleaned_data['date']
-            new.info = form.cleaned_data['info']
-            new.save()
-            return HttpResponseRedirect(reverse_lazy('handler:corrections'))
-    else:
-        form = CorrectionForm()
-    context = {
-        'form': form,
-        'title': "Nowa korekta"
-
-    }
-
-    return render(request, template_name, context)
 
 ###ATENDANCE###
 def attendance(request):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-
-    template_name = 'attendance.html'
-    context = {
-        'groups': StudentGroup.objects.all(),
-    }
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	
+	template_name = 'attendance.html'
+	context = {
+		'groups': StudentGroup.objects.all(),
+		'searchbar': True
+	}
+	return render(request, template_name, context)
 
 
 def check_attendance(request, group_id):
-    if not request.user.is_authenticated:
-        return redirect('/accounts/login')
-    template_name = 'form.html'
-
-    studs = []
-    for stud in Student.objects.filter(group_id=group_id):
-        studs.append(tuple([stud.id, stud]))
-
-    if request.method == 'POST':
-        form = AttendanceForm(request.POST, students=studs)
-        if form.is_valid():
-            present = []
-            for present_stud in form.cleaned_data['presence']:
-                temp_presence = Attendance()
-                temp_presence.student = Student.objects.get(pk=present_stud)
-                temp_presence.present = True
-                temp_presence.date = form.cleaned_data['date']
-                temp_presence.save_attendance()
-                temp_presence.save()
-                present.append(present_stud)
-            for stud in Student.objects.filter(group_id=group_id):
-                if stud.id not in present:
-                    temp_absence = Attendance()
-                    temp_absence.student = stud
-                    temp_absence.present = False
-                    temp_absence.date = form.cleaned_data['date']
-                    temp_absence.save_attendance()
-                    temp_absence.save()
-
-            return HttpResponseRedirect(reverse_lazy('handler:attendance'))
-    else:
-        form = AttendanceForm(students=studs)
-    context = {
-        'form': form,
-        'title': "Sprawdź obecność"
-
-    }
-
-    return render(request, template_name, context)
+	if not request.user.is_authenticated:
+		return redirect('/accounts/login')
+	template_name = 'form.html'
+	
+	studs = []
+	for stud in Student.objects.filter(group_id=group_id):
+		studs.append(tuple([stud.id, stud]))
+	
+	if request.method == 'POST':
+		form = AttendanceForm(request.POST, students=studs)
+		if form.is_valid():
+			present = []
+			for present_stud in form.cleaned_data['presence']:
+				temp_presence = Attendance()
+				temp_presence.student = Student.objects.get(pk=present_stud)
+				temp_presence.present = True
+				temp_presence.date = form.cleaned_data['date']
+				temp_presence.save_attendance()
+				temp_presence.save()
+				present.append(present_stud)
+			for stud in Student.objects.filter(group_id=group_id):
+				if stud.id not in present:
+					temp_absence = Attendance()
+					temp_absence.student = stud
+					temp_absence.present = False
+					temp_absence.date = form.cleaned_data['date']
+					temp_absence.save_attendance()
+					temp_absence.save()
+			
+			return HttpResponseRedirect(reverse_lazy('handler:attendance'))
+	else:
+		form = AttendanceForm(students=studs)
+	context = {
+		'form': form,
+		'title': "Sprawdź obecność"
+		
+	}
+	
+	return render(request, template_name, context)

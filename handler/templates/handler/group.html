@@ -2,67 +2,33 @@
 {% load static %}
 {% block title %}{{ group }}{% endblock %}
 {% block content %}
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:340px;margin-right:40px">
 
-  <!-- Header -->
-  <!--<div class="w3-container" style="margin-top:80px" id="home">
-    <h1 class="w3-jumbo"><b>Panel</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-  </div>-->
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-6 col-md-8">
+            <div class="card text-center" id="data" style="margin-top:75px">
+                <div class="card-header">
+                    <h1 class="text-primary card-title"><b>{{ group }}</b></h1>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <ul class="list-group">
+                        <li class="list-group-item">czas trwania lekcji: {{ minutes }} min</li>
+                        <li class="list-group-item">ilość lekcji: {{ group.amount_lessons }}</li>
+                        <li class="list-group-item list-group-item-dark">Dzieci:</li>
+                        {% for student in students %}
 
-  <!-- Clients -->
-  <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-blue"><b>{{ group }}</b></h1>
-    <hr style="width:50px;border:5px solid blue" class="w3-round">
-      <div class="w3-row-padding">
-    <div class="w3-half w3-margin-bottom">
-      <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ group }}</li>
-          <li class="w3-padding-16">czas trwania lekcji: {{ minutes }} min</li>
-          <li class="w3-padding-16">ilość lekcji: {{ group.amount_lessons }}</li>
-          <li class="w3-dark-grey w3-padding-32">Dzieci:</li>
-          {% for student in students %}
-          <a href="{% url 'handler:student' student.id%}"><li class="w3-padding-16">{{ student }}</li></a>
-          {% endfor %}
-        <!--<li class="w3-padding-16">
-          <h2>$ 199</h2>
-          <span class="w3-opacity">per room</span>
-        </li>
-        <li class="w3-light-grey w3-padding-24">
-          <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-        </li>-->
-      </ul>
+                            <li class="list-group-item">
+                                <a class="card-link" href="{% url 'handler:student' student.id %}">{{ student }}</a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'handler:delete_group' group.id %}" class="btn btn-outline-danger">Usuń Grupę</a>
+                    <a href="{% url 'handler:edit_group' group.id %}" class="btn btn-outline-warning">Edytuj</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <a href="{% url 'handler:delete_group' group.id %}" class="btn btn-danger">Usuń Grupę</a>
-    <a href="{% url 'handler:edit_group' group.id %}" class="btn btn-primary">Edytuj</a>
 
-  </div>
-
-
-
-  <!-- Contact
-  <div class="w3-container" id="contact" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>Do you want us to style your home? Fill out the form and fill me in with the details :) We love meeting new people!</p>
-    <form action="/action_page.php" target="_blank">
-      <div class="w3-section">
-        <label>Name</label>
-        <input class="w3-input w3-border" type="text" name="Name" required>
-      </div>
-      <div class="w3-section">
-        <label>Email</label>
-        <input class="w3-input w3-border" type="text" name="Email" required>
-      </div>
-      <div class="w3-section">
-        <label>Message</label>
-        <input class="w3-input w3-border" type="text" name="Message" required>
-      </div>
-      <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
-    </form>
-  </div>
--->
-<!-- End page content -->
-</div>
 {% endblock %}

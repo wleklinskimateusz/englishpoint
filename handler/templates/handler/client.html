@@ -3,86 +3,70 @@
 {% block title %}{{ client }}{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
-<!-- !PAGE CONTENT! -->
-<div class="w3-main" style="margin-left:340px;margin-right:40px">
 
-  <!-- Header -->
-  <!--<div class="w3-container" style="margin-top:80px" id="home">
-    <h1 class="w3-jumbo"><b>Panel</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-  </div>-->
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-6 col-md-8">
+            <div class="card text-center" id="data" style="margin-top:75px">
+                <div class="card-header">
+                    <h1 class="text-primary card-title"><b>{{ client }}</b></h1>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <ul class="list-group w-50">
+                        {% if client.email %}
+                            <li class="list-group-item">email: <a href="mailto:{{ client.email }}">{{ client.email }}</a></li>
+                        {% endif %}
+                        {% if client.phone_number %}
+                            <li class="list-group-item">tel: <a href="tel:{{ client.phone_number }}">{{ client.phone_number }}</a></li>
+                        {% endif %}
+                        <li class="list-group-item">Dzieci:</li>
+                        {% for kid in kids %}
 
-  <!-- Clients -->
-  <div class="w3-container" id="data" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-blue"><b>{{ client }}</b></h1>
-    <hr style="width:50px;border:5px solid blue" class="w3-round">
-      <div class="w3-row-padding">
-    <div class="w3-half w3-margin-bottom">
-      <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">{{ client }}</li>
-        {% if client.email %}
-          <li class="w3-padding-16">email: {{ client.email }}</li>
-        {% endif %}
-        {% if client.phone_number %}
-            <li class="w3-padding-16">tel: {{ client.phone_number }}</li>
-        {% endif %}
-      <li class="w3-dark-grey w3-padding-32">Dzieci:</li>
-        {% for kid in kids %}
-            <a href="{% url 'handler:student' kid.id %}"><li class="w3-padding-16">{{ kid }}</li></a>
-        {% endfor %}
-      {% if haventpaid %}
-          <li class="w3-dark-grey w3-padding-32">Zaległość: {{ client.diff_to_pay|floatformat:2 }}zł</li>
-      {%  endif %}
-        <!--<li class="w3-padding-16">
-          <h2>$ 199</h2>
-          <span class="w3-opacity">per room</span>
-        </li>
-        <li class="w3-light-grey w3-padding-24">
-          <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-        </li>-->
-      </ul>
-    {% if form %}
-    <div class="my_form">
-        <form action="" method="POST">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">Wyślij</button>
-        </form>
+                            <li class="list-group-item"><a href="{% url 'handler:student' kid.id %}">{{ kid }}</a></li>
+
+                        {% endfor %}
+                        {% if haventpaid %}
+                            <li class="list-group-item">
+                                Zaległość: {{ client.diff_to_pay|floatformat:2 }}zł
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'handler:delete_client' client.id %}" class="btn btn-outline-danger">Usuń
+                        Rodzica</a>
+                    <a href="{% url 'handler:client_edit' client.id %}" class="btn btn-outline-primary">Edytuj</a>
+                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                        Wyślij maila
+                    </button>
+
+                </div>
+            </div>
+        </div>
     </div>
-    {% endif %}
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nowy Mail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="my_form">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary">Wyślij</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="{% url 'handler:send_mail' client.id %}" type="button" class="btn btn-primary">Save
+                        changes</a>
+                </div>
+            </div>
+        </div>
     </div>
-        <a href="{% url 'handler:delete_client' client.id %}" class="btn btn-danger">Usuń Rodzica</a>
-        <a href="{% url 'handler:client_edit' client.id %}" class="btn btn-primary">Edytuj</a>
-      {% if not form %}
-      <a href="{% url 'handler:send_mail' client.id %}" class="btn btn-warning">Wyślij e-mail</a>
-      {% endif %}
-
-  </div>
-
-
-
-  <!-- Contact
-  <div class="w3-container" id="contact" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
-    <p>Do you want us to style your home? Fill out the form and fill me in with the details :) We love meeting new people!</p>
-    <form action="/action_page.php" target="_blank">
-      <div class="w3-section">
-        <label>Name</label>
-        <input class="w3-input w3-border" type="text" name="Name" required>
-      </div>
-      <div class="w3-section">
-        <label>Email</label>
-        <input class="w3-input w3-border" type="text" name="Email" required>
-      </div>
-      <div class="w3-section">
-        <label>Message</label>
-        <input class="w3-input w3-border" type="text" name="Message" required>
-      </div>
-      <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
-    </form>
-  </div>
--->
-<!-- End page content -->
-</div>
 {% endblock %}
