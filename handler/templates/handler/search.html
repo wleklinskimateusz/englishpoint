@@ -13,12 +13,12 @@
                     <ul class="list-group">
                         {% for student in students %}
 
-                            <li class="list-group-item">
+                            <li class="list-group-item list-group-item-primary">
                                 <a href="{% url 'handler:student' student.id %}">{{ student }}</a>
                             </li>
                         {% empty %}
-                            <li class="list-group-item">
-                                <a href="{% url 'handler:new_student' %}">Add New Student</a>
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
                             </li>
                         {% endfor %}
                     </ul>
@@ -37,12 +37,12 @@
                     <ul class="list-group">
                         {% for parent in parents %}
 
-                            <li class="list-group-item">
-                                <a href="{% url 'handler:parent' parent.id %}">{{ parent }}</a>
+                            <li class="list-group-item list-group-item-primary">
+                                <a href="{% url 'handler:client' parent.id %}">{{ parent }}</a>
                             </li>
                         {% empty %}
-                            <li class="list-group-item">
-                                <a href="{% url 'handler:new_client' %}">Add New Parent</a>
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
                             </li>
                         {% endfor %}
                     </ul>
@@ -61,12 +61,12 @@
                     <ul class="list-group">
                         {% for group in groups %}
 
-                            <li class="list-group-item">
+                            <li class="list-group-item list-group-item-primary">
                                 <a href="{% url 'handler:group' group.id %}">{{ group }}</a>
                             </li>
                         {% empty %}
-                            <li class="list-group-item">
-                                <a href="{% url 'handler:new_group' %}">Add New Group</a>
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
                             </li>
                         {% endfor %}
                     </ul>

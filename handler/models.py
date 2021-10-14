@@ -36,7 +36,8 @@ class Parent(models.Model):
         kids = Student.objects.filter(parent=self.id)
         for kid in kids:
             if Year.get_selected() in kid.years.all():
-                output += kid.monthly_payment * kid.past_months() - kid.corrections()
+                kid_year = kid.get_student_year()
+                output += kid_year.monthly_payment * kid_year.past_months() - kid_year.corrections()
         return output
 
     def paid(self):
@@ -66,8 +67,8 @@ class Student(models.Model):
     group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, null=True)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     birthday = models.DateField(null=True, blank=True)
-    monthly_payment = models.FloatField()
-    first_month = models.IntegerField()
+    monthly_payment = models.FloatField(null=True)
+    first_month = models.IntegerField(null=True)
     present = models.IntegerField(default=0)
     absent = models.IntegerField(default=0)
     years = models.ManyToManyField(Year)
@@ -77,14 +78,21 @@ class Student(models.Model):
 
     def corrections(self):
         output = 0
-        for my_year in StudentYear.objects.filter(student=self).all():
+        for my_year in self.get_student_years():
             output += my_year.corrections()
+
+    def get_student_years(self):
+        return StudentYear.objects.filter(student=self).all()
+
+    def get_student_year(self):
+        return self.get_student_years().filter(year=Year.get_selected()).first()
 
 
 class StudentYear(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     monthly_payment = models.FloatField()
     first_month = models.IntegerField()
+    group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, null=True, blank=True)
     present = models.IntegerField(default=0)
     absent = models.IntegerField(default=0)
     year = models.ForeignKey(Year, on_delete=models.CASCADE)
@@ -115,6 +123,11 @@ class StudentYear(models.Model):
 
     def attendance(self):
         return 100 * self.present / (self.present + self.absent)
+
+    def __str__(self) -> str:
+        if not self.student or not self.year:
+            return "Empty Student Year"
+        return f"{self.student} in {self.year}"
 
 
 

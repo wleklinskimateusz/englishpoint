@@ -3,7 +3,7 @@ from django.views.generic import DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.forms import Form
 from .models import *
-from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm, CorrectionForm
+from .forms import AddYearStudent, StudentForm, StudentGroupForm, ParentForm, PaymentForm, AttendanceForm, SendMailForm, CorrectionForm
 from django.core.mail import send_mail
 from datetime import timedelta
 from django.http import JsonResponse
@@ -97,7 +97,7 @@ def client(request, client_id):
     template_name = 'client.html'
     kids = []
     for kid in Student.objects.filter(parent=my_client):
-        if Year.get_selected() in kid.years:
+        if Year.get_selected() in kid.years.all():
             kids.append(kid)
     context = add_context({
         'client': my_client,
@@ -116,6 +116,7 @@ def new_client(request):
         form = ParentForm(request.POST)
         if form.is_valid():
             new = Parent()
+            new.save()
             new.years.add(Year.get_selected())
             new.first_name = form.cleaned_data['first_name']
             new.surname = form.cleaned_data['surname']
@@ -245,6 +246,7 @@ def student(request, student_id):
     template_name = 'student.html'
     context = add_context({
         'student': my_student,
+        'studentYear': my_student.get_student_year(),
         'attendances': Attendance.objects.filter(student=my_student),
     })
     return render(request, template_name, context)
@@ -259,20 +261,28 @@ def new_student(request):
         form = StudentForm(request.POST)
         if form.is_valid():
             new = Student()
-            new_year = StudentYear()
-            new_year = Year.get_selected()
-            new.years.add(Year.get_selected())
             new.first_name = form.cleaned_data['first_name']
             new.surname = form.cleaned_data['surname']
-
-            new_year.group = form.cleaned_data['group']
             new.parent = form.cleaned_data['parent']
             new.birthday = form.cleaned_data['birthday']
+            new.save()
+            new.years.add(Year.get_selected())
+            new.save()
+            print("New student Saved")
+            new_year = StudentYear()
+            
+            print("New year created")
+            new_year.year = Year.get_selected()
+            
+            
+            new_year.group = form.cleaned_data['group']
+            
             new_year.monthly_payment = form.cleaned_data['monthly_payment']
             new_year.first_month = form.cleaned_data['first_month']
-            new.save()
             new_year.student = new
+            print(new_year)
             new_year.save()
+            print("new year saved")
             return HttpResponseRedirect(reverse_lazy('handler:students'))
     else:
         form = StudentForm()
@@ -311,6 +321,31 @@ class StudentUpdate(UpdateView):
 
     def get_context_data(self, **kwargs):
         return add_context(super().get_context_data(**kwargs))
+
+def student_add_year(request, student_id, starting_year):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+    year = Year.objects.filter(starting_year=starting_year).first()
+    student = Student.objects.get(student_id)
+    if year not in student.years.all():
+        form = AddYearStudent(initial={'student': student.id, 'year': year.id})
+        return render(request, 'form.html', add_context({'form': form, 'action': reverse_lazy('')}))
+
+def student_add_year_form(request):
+    form = AddYearStudent(request.POST)
+    if form.is_valid():
+        student = Student.objects.get(form.cleaned_data['student'])
+        year = Year.objects.get(form.cleaned_data['year'])
+        student.years.add(year)
+        student.save()
+        student_year = StudentYear()
+        student_year.student = student
+        student_year.year = year
+        student_year.group = form.cleaned_data['group']
+        student_year.first_month = form.cleaned_data['first_month']
+        student_year.monthly_payment = form.cleaned_data['monthly_payment']
+        student_year.save()
+        return redirect(reverse_lazy('handle:student', {'student_id': student.id}))
 
 
 ###GROUPS###
@@ -565,8 +600,8 @@ def previous_year(request):
 def search(request):
     query = request.GET.get('search')
     if query:
-        students = Student.objects.filter(Q(first_name__contains=query) | Q(last_name__contains=query))
-        parents = Parent.objects.filter(Q(first_name__contains=query) | Q(last_name__contains=query))
+        students = Student.objects.filter(Q(first_name__contains=query) | Q(surname__contains=query))
+        parents = Parent.objects.filter(Q(first_name__contains=query) | Q(surname__contains=query))
         groups = StudentGroup.objects.filter(name__contains=query)
     else: 
         students, parents, groups = [], [], []
@@ -576,3 +611,4 @@ def search(request):
         'parents': parents,
         'groups': groups,
         }))
+
