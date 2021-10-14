@@ -29,5 +29,8 @@ urlpatterns = [
     path('groups/new', views.new_group, name='new_group'),
     path('attendance/', views.attendance, name='attendance'),
     path('attendance/check/<int:group_id>', views.check_attendance, name='check_attendance'),
+    path('years/next_year', views.next_year, name='next_year'),
+    path('years/previous_year', views.previous_year, name='previous_year'),
+    path('search', views.search, name="search"),
 
 ]
