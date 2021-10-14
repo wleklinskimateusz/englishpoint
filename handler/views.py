@@ -7,13 +7,15 @@ from .forms import StudentForm, StudentGroupForm, ParentForm, PaymentForm, Atten
 from django.core.mail import send_mail
 from datetime import timedelta
 from django.http import JsonResponse
+from django.db.models import Q
 
 
-def add_context(orig: dict) -> dict:
+def add_context(orig: dict, search: bool = True) -> dict:
     output = orig
     output['selected_year'] = Year.get_selected()
     output['can_prev'] = output['selected_year'].starting_year != Year.objects.first().starting_year
     output['can_next'] = output['selected_year'].starting_year != Year.objects.last().starting_year
+    output['searchbar'] = search
     return output
 
 
@@ -558,3 +560,19 @@ def previous_year(request):
     new_year.save()
     # return JsonResponse({"Success": "Year changed to previous"})
     return redirect(reverse_lazy('handler:home'))
+
+
+def search(request):
+    query = request.GET.get('search')
+    if query:
+        students = Student.objects.filter(Q(first_name__contains=query) | Q(last_name__contains=query))
+        parents = Parent.objects.filter(Q(first_name__contains=query) | Q(last_name__contains=query))
+        groups = StudentGroup.objects.filter(name__contains=query)
+    else: 
+        students, parents, groups = [], [], []
+
+    return render(request, 'search.html', add_context({
+        'students': students,
+        'parents': parents,
+        'groups': groups,
+        }))
