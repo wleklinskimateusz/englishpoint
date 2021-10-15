@@ -12,10 +12,10 @@ from django.db.models import Q
 
 def add_context(orig: dict, search: bool = True) -> dict:
     output = orig
-    output['selected_year'] = Year.get_selected()
-    output['can_prev'] = output['selected_year'].starting_year != Year.objects.first().starting_year
-    output['can_next'] = output['selected_year'].starting_year != Year.objects.last().starting_year
-    output['searchbar'] = search
+    # output['selected_year'] = Year.get_selected()
+    # output['can_prev'] = output['selected_year'].starting_year != Year.objects.first().starting_year
+    # output['can_next'] = output['selected_year'].starting_year != Year.objects.last().starting_year
+    # output['searchbar'] = search
     return output
 
 
