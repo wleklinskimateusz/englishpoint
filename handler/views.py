@@ -218,6 +218,14 @@ class ClientUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         return add_context(super().get_context_data(**kwargs))
 
+def add_year_client(request, parent_id):
+    if not request.user.is_authenticated:
+        return redirect('/accounts/login')
+    
+    parent = Parent.objects.get(parent_id)
+    parent.years.add(Year.objects.filter(starting_year=2021))
+    parent.save()
+
 
 ###STUDENTS###
 
@@ -325,17 +333,16 @@ class StudentUpdate(UpdateView):
 def student_add_year(request, student_id, starting_year):
     if not request.user.is_authenticated:
         return redirect('/accounts/login')
-    year = Year.objects.filter(starting_year=starting_year).first()
     student = Student.objects.get(student_id)
-    if year not in student.years.all():
-        form = AddYearStudent(initial={'student': student.id, 'year': year.id})
+    if Year.selected_year() not in student.years.all():
+        form = AddYearStudent(initial={'student': student.id})
         return render(request, 'form.html', add_context({'form': form, 'action': reverse_lazy('')}))
 
 def student_add_year_form(request):
     form = AddYearStudent(request.POST)
     if form.is_valid():
         student = Student.objects.get(form.cleaned_data['student'])
-        year = Year.objects.get(form.cleaned_data['year'])
+        year = Year.objects.filter(starting_year=2021)
         student.years.add(year)
         student.save()
         student_year = StudentYear()
@@ -401,6 +408,7 @@ def new_group(request):
     })
 
     return render(request, template_name, context)
+
 
 
 class GroupDeleteView(DeleteView):

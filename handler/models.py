@@ -177,3 +177,5 @@ class Correction(models.Model):
 
     def __str__(self):
         return f"{self.kid} ma korektę {self.value}zł"
+
+

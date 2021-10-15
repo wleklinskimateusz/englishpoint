@@ -77,7 +77,6 @@ class SendMailForm(forms.Form):
 
 class AddYearStudent(forms.Form):
     student = forms.IntegerField(widget=forms.HiddenInput())
-    year = forms.IntegerField(widget=forms.HiddenInput())
     group = forms.ModelChoiceField(StudentGroup.objects.all(), label="Grupa")
     first_month = forms.IntegerField(label='pierwszy miesiąc')
     monthly_payment = forms.FloatField(label='miesięczna należność')
