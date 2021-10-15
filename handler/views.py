@@ -378,9 +378,10 @@ def group(request, group_id):
 
     my_group = get_object_or_404(StudentGroup, pk=group_id)
     template_name = 'group.html'
+    students = [stud_year.student for stud_year in StudentYear.objects.filter(group=my_group)]
     context = add_context({
         'group': my_group,
-        'students': StudentYear.objects.filter(group=my_group),
+        'students': students,
         'minutes': my_group.lesson_duration.seconds / 60,
     })
     return render(request, template_name, context)
