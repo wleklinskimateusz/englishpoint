@@ -1,0 +1,18 @@
+[
+    {
+      "model": "handler.year",
+      "pk": 1,
+      "fields": {
+        "starting_year": 2020,
+        "selected": true
+      }
+    },
+    {
+        "model": "handler.year",
+        "pk": 2,
+        "fields": {
+          "starting_year": 2021,
+          "selected": false
+        }
+      }
+  ]
