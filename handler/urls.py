@@ -32,5 +32,6 @@ urlpatterns = [
     path('years/next_year', views.next_year, name='next_year'),
     path('years/previous_year', views.previous_year, name='previous_year'),
     path('search', views.search, name="search"),
+    path('update_db', views.update_db, name='update')
 
 ]

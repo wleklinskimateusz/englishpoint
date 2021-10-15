@@ -612,3 +612,35 @@ def search(request):
         'groups': groups,
         }))
 
+def update_db(request):
+    year2020 = Year.objects.filter(starting_year=2020).first()
+    for student in Student.objects.all():
+        student.years.add(year2020)
+        student_year = StudentYear()
+        student_year.year = year2020
+        student_year.monthly_payment = student.monthly_payment
+        student_year.first_month = student.first_month
+        student_year.group = student.group
+        student_year.student = student
+        student_year.finished = True
+        student_year.save()
+        student.save()
+    
+    for client in Parent.objects.all():
+        client.years.add(year2020)
+        client.save()
+
+    for group in StudentGroup.objects.all():
+        group.year = year2020
+        group.save()
+    
+    for payment in Payment.objects.all():
+        payment.year = year2020
+        payment.save()
+
+    for correction in Correction.objects.all():
+        correction.year = year2020
+        correction.save()
+
+    return JsonResponse({"success": "Completed"})
+
