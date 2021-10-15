@@ -54,6 +54,7 @@
         <p>
         <h2>Hello {{ user.first_name }}!</h2>
         </p>
+
         <p>
             <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
             <a href="/admin" class="btn btn-warning">Panel</a>
@@ -69,7 +70,16 @@
         <a href="{% url "handler:corrections" %}" onclick="w3_close()" , class="w3-bar-item w3-button w3-hover-white">Korekty</a>
         <a href="{% url "handler:attendance" %}" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Obecności</a>
     </div>
+
+    Wybrany Rok: {{ selected_year }}
+    {% if can_prev %}
+        <a href="{% url "handler:previous_year" %}" class="btn btn-warning">Previous Year</a>
+    {% endif %}
+    {% if can_next %}
+        <a href="{% url "handler:next_year" %}" class="btn btn-warning">Next Year</a>
+    {% endif %}
 </nav>
+
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-blue w3-xlarge w3-padding">
@@ -87,8 +97,8 @@
     {% if searchbar %}
         <div class="row mt-2 ms-5 d-flex justify-content-center">
             <div class="col-8 col-md-6">
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" action="{% url 'handler:search'%}" method="get">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search" name="search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>

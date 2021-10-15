@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body">
                     <div class="my_form">
-                        <form action="" method="POST">
+                        <form action={{action|default:""}} method="POST">
                             {% csrf_token %}
                             {{ form|crispy }}
                             <button type="submit" class="btn btn-primary">Dodaj</button>

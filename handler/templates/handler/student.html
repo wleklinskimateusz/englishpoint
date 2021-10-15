@@ -13,8 +13,8 @@
                     <ul class="list-group">
 
                             <li class="list-group-item">
-                                <a href="{% url 'handler:group' student.group.id %}">
-                                    Grupa: {{ student.group }}
+                                <a href="{% url 'handler:group' studentYear.group.id %}">
+                                    Grupa: {{ studentYear.group }}
                                 </a>
                             </li>
 
@@ -27,8 +27,8 @@
                         {% if student.birthday %}
                             <li class="list-group-item">urodziny: {{ student.birthday }}</li>
                         {% endif %}
-                        {% if student.present != 0 or student.absent != 0 %}
-                            <li class="list-group-item">frekwencja: {{ student.attendance }}%</li>
+                        {% if studentYear.present != 0 or studentYear.absent != 0 %}
+                            <li class="list-group-item">frekwencja: {{ studentYear.attendance }}%</li>
                         {% endif %}
                         <li class="list-group-item list-group-item-dark">Obecności:</li>
                         {% for attendance in attendances %}
@@ -39,6 +39,7 @@
                 <div class="card-footer">
                     <a href="{% url 'handler:delete_student' student.id %}" class="btn btn-outline-danger">Usuń Ucznia</a>
                     <a href="{% url 'handler:edit_student' student.id %}" class="btn btn-outline-primary">Edytuj</a>
+                    <a href="{% url 'handler:student_add_year' student.id selected_year %}">Kopiuj do nowego roku</a>
                 </div>
             </div>
         </div>
