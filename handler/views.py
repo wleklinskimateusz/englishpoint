@@ -218,6 +218,7 @@ class ClientUpdate(UpdateView):
     def get_context_data(self, **kwargs):
         return add_context(super().get_context_data(**kwargs))
 
+
 def add_year_client(request, parent_id):
     if not request.user.is_authenticated:
         return redirect('/accounts/login')
@@ -225,6 +226,7 @@ def add_year_client(request, parent_id):
     parent = Parent.objects.get(parent_id)
     parent.years.add(Year.objects.filter(starting_year=2021))
     parent.save()
+    return reverse_lazy('handler:client', kwargs={'client_id': parent_id})
 
 
 ###STUDENTS###
