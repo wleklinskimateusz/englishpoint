@@ -39,7 +39,7 @@
                 <div class="card-footer">
                     <a href="{% url 'handler:delete_student' student.id %}" class="btn btn-outline-danger">Usuń Ucznia</a>
                     <a href="{% url 'handler:edit_student' student.id %}" class="btn btn-outline-primary">Edytuj</a>
-                    <a href="{% url 'handler:student_add_year' student.id selected_year %}">Kopiuj do nowego roku</a>
+                    <a href="{% url 'handler:student_add_year' student.id %}">Kopiuj do nowego roku</a>
                 </div>
             </div>
         </div>
