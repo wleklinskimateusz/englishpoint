@@ -14,7 +14,8 @@ class Year(models.Model):
 
     @staticmethod
     def get_selected():
-        return Year.objects.filter(selected=True).first()
+        return Year()
+        # Year.objects.filter(selected=True).first()
 
     def __str__(self):
         return f"{self.starting_year}/{self.starting_year + 1}"
