@@ -74,3 +74,9 @@ class SendMailForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea, label="Wiadmość")
     send_copy_to_me = forms.BooleanField(initial=True, required=False, label="Wyślij kopię do mnie")
 
+
+class AddYearStudent(forms.Form):
+    student = forms.IntegerField(widget=forms.HiddenInput())
+    group = forms.ModelChoiceField(StudentGroup.objects.all(), label="Grupa")
+    first_month = forms.IntegerField(label='pierwszy miesiąc')
+    monthly_payment = forms.FloatField(label='miesięczna należność')

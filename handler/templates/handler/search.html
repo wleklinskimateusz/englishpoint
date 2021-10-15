@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Wyniki{% endblock %}
+{% block content %}
+
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-6 col-md-8">
+            <div class="card text-center" id="data" style="margin-top:75px">
+                <div class="card-header">
+                    <h1 class="text-primary card-title"><b>Studenci</b></h1>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <ul class="list-group">
+                        {% for student in students %}
+
+                            <li class="list-group-item list-group-item-primary">
+                                <a href="{% url 'handler:student' student.id %}">{{ student }}</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-6 col-md-8">
+            <div class="card text-center" id="data" style="margin-top:75px">
+                <div class="card-header">
+                    <h1 class="text-primary card-title"><b>Rodzice</b></h1>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <ul class="list-group">
+                        {% for parent in parents %}
+
+                            <li class="list-group-item list-group-item-primary">
+                                <a href="{% url 'handler:client' parent.id %}">{{ parent }}</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col col-lg-6 col-md-8">
+            <div class="card text-center" id="data" style="margin-top:75px">
+                <div class="card-header">
+                    <h1 class="text-primary card-title"><b>Grupy</b></h1>
+                </div>
+                <div class="card-body d-flex justify-content-center">
+                    <ul class="list-group">
+                        {% for group in groups %}
+
+                            <li class="list-group-item list-group-item-primary">
+                                <a href="{% url 'handler:group' group.id %}">{{ group }}</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item list-group-item-warning">
+                                Brak pasujących wyników
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

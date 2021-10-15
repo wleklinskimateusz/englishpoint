@@ -12,12 +12,15 @@ urlpatterns = [
     path('clients/<int:pk>/edit', views.ClientUpdate.as_view(), name='client_edit'),
     path('clients/<int:client_id>/contact', views.mail_to_client, name='send_mail'),
     path('clients/new', views.new_client, name='new_client'),
+    path('client/<int:parent_id>', views.add_year_client, name="add_year_client"),
     path('clients/overdues', views.clients_overdue, name='overdues'),
     path('students', views.students, name="students"),
     path('student/<int:student_id>', views.student, name='student'),
     path('student/<int:pk>/edit', views.StudentUpdate.as_view(), name='edit_student'),
     path('student/<int:pk>/delete', views.StudentDeleteView.as_view() , name='delete_student'),
     path('student/new', views.new_student, name='new_student'),
+    path('student/<int:student_id>/add/<int:starting_year>', views.student_add_year, name='student_add_year'),
+    path('student/add-year/form', views.student_add_year_form, name='student_new_year_form'),
     path('payments', views.payments, name="payments"),
     path('payments/new', views.new_payment, name="new_payment"),
     path('corrections', views.corrections, name='corrections'),
@@ -29,5 +32,9 @@ urlpatterns = [
     path('groups/new', views.new_group, name='new_group'),
     path('attendance/', views.attendance, name='attendance'),
     path('attendance/check/<int:group_id>', views.check_attendance, name='check_attendance'),
+    path('years/next_year', views.next_year, name='next_year'),
+    path('years/previous_year', views.previous_year, name='previous_year'),
+    path('search', views.search, name="search"),
+    path('update_db', views.update_db, name='update')
 
 ]
